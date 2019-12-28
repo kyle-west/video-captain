@@ -5,29 +5,56 @@ const path = require('path')
 const app = express()
 const { port, mountPath } = require('./config')
 
+
+const isSupportedMediaType = x => ['.m4v', '.mp4'].reduce((a,c) => a || x.endsWith(c), false)
+
+function walkMediaFiles(dir, files = []) {
+  fs.readdirSync(dir).forEach(function(file) {
+    if (fs.statSync(path.join(dir, file)).isDirectory()) {
+      files = walkMediaFiles(path.join(dir, file), files);
+    }
+    else if (isSupportedMediaType(file)) {
+      files.push({file, folder: dir.replace(mountPath, '')});
+    }
+  });
+  return files;
+};
+
+const videoFiles = walkMediaFiles(mountPath)
+
+const organizedVideoFiles = {}
+videoFiles.forEach(video => {
+  const { file, folder } = video
+  organizedVideoFiles[folder] = organizedVideoFiles[folder] || []
+  organizedVideoFiles[folder].push(video)
+})
+const sortedVideoFiles = [...Object.keys(organizedVideoFiles).sort().filter(k => !!k).map(show => [ show, organizedVideoFiles[show] ]), [ 'Other Shows', organizedVideoFiles[''] ] ]
+
 app.use('/assets', express.static(path.join(__dirname, 'public')))
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
-  res.render('index', {foo: 'FOO'});
+  res.render('index', { videos : sortedVideoFiles });
 });
 
 app.get('/watch/:movieName', (req, res) => {
-  res.render('watch', { movieName: req.params.movieName });
+  const { movieName } = req.params
+  const alikeVideos = videoFiles.find(x => x.file === movieName).folder
+  res.render('watch', { movieName, additionalEpisodes: organizedVideoFiles[alikeVideos] || organizedVideoFiles[''] });
 });
 
 // Modified from https://gist.github.com/BetterProgramming/3bf5d66b0285a2690de684d46c4cabb4
 // for better security and robstness
 app.get('/video/:movieName', function(req, res) {
   const { movieName } = req.params
-  const path = `${mountPath}/${movieName}.m4v`
-  const fileOK = /^[A-z ]+$/.test(movieName) && fs.existsSync(path)
+  const { file, folder, NOT_FOUND } = videoFiles.find(x => x.file === movieName) || { NOT_FOUND: 404 }
   
-  if (!fileOK) {
-    let status = /^[A-z ]+$/.test(movieName) ? 404 : 403
-    console.log(`[${status}] ABORTING VIDEO "${path}"`)
-    return res.sendStatus(status)
+  if (NOT_FOUND) {
+    console.log(`[${NOT_FOUND}] ABORTING VIDEO REQUEST "${movieName}"`)
+    return res.sendStatus(NOT_FOUND)
   }
+
+  const path = `${mountPath}${folder}/${file}`
 
   const stat = fs.statSync(path)
   const fileSize = stat.size

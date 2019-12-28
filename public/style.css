@@ -1,0 +1,54 @@
+body {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.title {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  text-align: center;
+}
+
+.browser {
+  width: 90%;
+  margin: auto;
+}
+
+.show {
+  margin-bottom: 50px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.video-thumbnail {
+  width: 200px;
+  height: 150px;
+  display: block;
+  font-size: 32px;
+  background-color: darkslategrey;
+  color: white;
+  text-decoration: none;
+  margin: 5px;
+  padding: 15px;
+}
+.video-thumbnail:hover {
+  text-decoration: underline;
+}
+
+.viewer {
+  display: flex;
+  width: 100%;
+}
+
+.viewer main {
+  flex-grow: 2;
+}
+
+.viewer main video {
+  width: calc(100% - 100px);
+  margin: 50px;
+  height: auto;
+}
+
+.viewer aside {
+  min-width: fit-content;
+  padding: 20px;
+}

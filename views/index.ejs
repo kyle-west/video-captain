@@ -5,12 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>VIDEO CAPTAIN</title>
+  <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-  <h1>VIDEO CAPTAIN BROWSE</h1>
-  
-  <a href="/watch/Inception">Inception</a>
-  <a href="/watch/The%20Dark%20Knight">The Dark Knight</a>
-  <a href="/watch/The%20Dark%20Knight%20Rises">The Dark Knight Rises</a>
+  <div class="browser">
+    <h1 class="title">VIDEO CAPTAIN</h1>
+    <% videos.forEach(([ show, episodes ]) => { %>
+      <h2><%= show.replace('/', '').replace(/\//g, ': ') %></h2>
+      <section class="show">
+        <% episodes.forEach(({ file }) => { %>
+          <a class="video-thumbnail" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '') %></a>
+        <% }) %>
+      </section>
+    <% }) %>
+  </div>
 </body>
 </html>

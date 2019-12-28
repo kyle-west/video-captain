@@ -4,12 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>VIDEO CAPTAIN | <%- movieName %></title>
+  <title>VIDEO CAPTAIN | <%- movieName.replace(/\.\w+$/, '') %></title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <script src="/assets/player.js"></script>
 </head>
 <body>
-  <h1><%- movieName %></h1>
-  <video id="videoPlayer" controls>
-    <source src="/video/<%- encodeURIComponent(movieName) %>" type="video/mp4">
-  </video>
+  <div class="viewer">
+    <main>
+      <a href="/"> Back to Browse</a> 
+      <video id="videoPlayer" controls autoplay>
+        <source src="/video/<%- encodeURIComponent(movieName) %>" type="video/mp4">
+      </video>
+      <h1><%- movieName.replace(/\.\w+$/, '') %></h1>
+    </main>
+    <aside>
+      <% additionalEpisodes.forEach(({ file }) => { %>
+        <a class="video-thumbnail" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '') %></a>
+      <% }) %>
+    </aside>
+  </div>
+  <script>
+    getPlayer().focus()
+  </script>
 </body>
 </html>

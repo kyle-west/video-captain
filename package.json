@@ -1,0 +1,25 @@
+{
+  "name": "video-captain",
+  "version": "0.1.0",
+  "description": "Host your home media at a mount path",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyle-west/video-captain.git"
+  },
+  "author": "kyle-west",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/kyle-west/video-captain/issues"
+  },
+  "homepage": "https://github.com/kyle-west/video-captain#readme",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "ip": "^1.1.5"
+  }
+}

@@ -11,10 +11,10 @@
   <div class="browser">
     <h1 class="title">VIDEO CAPTAIN</h1>
     <% videos.forEach(([ show, episodes ]) => { %>
-      <h2><%= show.replace('/', '').replace(/\//g, ': ') %></h2>
+      <h2><%= show.replace('/', '').replace(/\//g, ': ').replace(/^\d\d /, '') %></h2>
       <section class="show">
         <% episodes.forEach(({ file }) => { %>
-          <a class="video-thumbnail" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '') %></a>
+          <a class="video-thumbnail" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
         <% }) %>
       </section>
     <% }) %>

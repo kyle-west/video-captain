@@ -15,11 +15,11 @@
       <video id="videoPlayer" controls autoplay>
         <source src="/video/<%- encodeURIComponent(movieName) %>" type="video/mp4">
       </video>
-      <h1><%- movieName.replace(/\.\w+$/, '') %></h1>
+      <h1><%- movieName.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></h1>
     </main>
     <aside>
       <% additionalEpisodes.forEach(({ file }) => { %>
-        <a class="video-thumbnail" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '') %></a>
+        <a class="video-thumbnail" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
       <% }) %>
     </aside>
   </div>

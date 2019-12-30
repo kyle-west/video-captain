@@ -73,7 +73,7 @@ app.get('/video/:movieName', function(req, res) {
       'Content-Length': chunksize,
       'Content-Type': 'video/mp4',
     }
-    console.log(`[200] SERVING VIDEO "${path}"`)
+    console.log(`[206] SERVING VIDEO "${path}"`)
     res.writeHead(206, head);
     file.pipe(res);
   } else {

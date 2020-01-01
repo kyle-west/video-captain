@@ -1,19 +1,52 @@
 body {
+  margin: 0;
+  padding: 0;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-.title {
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  text-align: center;
+nav {
+  font-size: 32px;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  display: block;
+  background-color: white;
+  padding: 15px;
+  box-sizing: border-box; 
 }
+nav a,
+nav a:hover,
+nav a:visited {
+  color: black;
+  text-decoration: none;
+}
+nav a:hover {
+  text-decoration: underline;
+}
+nav .now-playing {
+  color: #888;
+  font-size: 15px;
+  vertical-align: middle;
+  margin-left: 30px;
+}
+
 
 .browser {
   width: 90%;
   margin: auto;
 }
 
-.show {
-  margin-bottom: 50px;
+details summary {
+  margin: 20px;
+}
+details:first-of-type {
+  margin-top: 50px;
+}
+details summary * {
+  margin: 15px;
 }
 
 .show h2 {
@@ -35,15 +68,17 @@ body {
   background-color: darkslategrey;
   color: white;
   text-decoration: none;
-  margin: 5px;
+  margin: 15px;
   padding: 15px;
+  border-radius: 5px;
+  opacity: .8;
 }
 .hack-episode-alignment {
   background: none;
   height: 0;
 }
 .video-thumbnail:hover {
-  text-decoration: underline;
+  opacity: 1;
 }
 
 .video-thumbnail.current-video {
@@ -92,4 +127,34 @@ body {
 .viewer aside {
   min-width: fit-content;
   padding: 20px;
+  padding-top: 35px;
+}
+
+/* ELEVATIONS box-shadows borrowed from https://codepen.io/sdthornton/pen/wBZdXq */
+.elevation-1 {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.2s ease;
+}
+.elevation-1.interact:hover {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+.elevation-2 {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  transition: all 0.2s ease;
+}
+.elevation-2.interact:hover {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+.elevation-3 {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  transition: all 0.2s ease;
+}
+.elevation-3.interact:hover {
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+}
+.elevation-4 {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+.elevation-5 {
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }

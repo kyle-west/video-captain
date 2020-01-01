@@ -1,0 +1,6 @@
+<nav class="elevation-3">
+  <a href="/"><span class="title">Video Captain</span></a>
+  <% if (typeof movieName === 'string') { %>
+    <span class="now-playing">Now Playing: <%- movieName.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></span>
+  <% } %>
+</nav>

@@ -9,20 +9,19 @@
   <script src="/assets/player.js"></script>
 </head>
 <body>
+  <%- include('nav') %>
   <div class="viewer">
     <main>
-      <a href="/"> Back to Browse</a> 
       <video id="videoPlayer" controls autoplay>
         <source src="/video/<%- encodeURIComponent(movieName) %>" type="video/mp4">
       </video>
-      <h1><%- movieName.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></h1>
     </main>
     <aside>
       <% additionalEpisodes.forEach(({ file }, index) => { %>
         <% if (movieName === file) { %>
-          <a class="video-thumbnail current-video" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
+          <a class="video-thumbnail current-video elevation-1 interact" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
         <% } else { %>
-          <a class="video-thumbnail" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
+          <a class="video-thumbnail elevation-1 interact" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
         <% } %>
       <% }) %>
       <!-- HACK to get the last row to always justify nicely -->

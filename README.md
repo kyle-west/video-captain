@@ -8,7 +8,7 @@ You will need to set up your `config.js` in the root of this project. It should 
 
 ```js
 module.exports = {
-  port: 5555, // the port you want the server to host at
+  port: process.env.PORT || 5555, // the port you want the server to host at
   mountPath: '/media/videos/or/whatever', // path to the folder you want to serve items from
 }
 ```

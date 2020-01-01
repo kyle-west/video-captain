@@ -18,8 +18,12 @@
       <h1><%- movieName.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></h1>
     </main>
     <aside>
-      <% additionalEpisodes.forEach(({ file }) => { %>
-        <a class="video-thumbnail" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
+      <% additionalEpisodes.forEach(({ file }, index) => { %>
+        <% if (movieName === file) { %>
+          <a class="video-thumbnail current-video" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
+        <% } else { %>
+          <a class="video-thumbnail" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
+        <% } %>
       <% }) %>
     </aside>
   </div>

@@ -14,6 +14,13 @@ body {
 
 .show {
   margin-bottom: 50px;
+}
+
+.show h2 {
+  display: inline;
+}
+
+.episodes {
   display: flex;
   flex-wrap: wrap;
 }
@@ -33,6 +40,23 @@ body {
   text-decoration: underline;
 }
 
+.video-thumbnail.current-video {
+  background-color: darkblue;
+}
+.video-thumbnail.current-video::after {
+  content: "Currently Playing";
+  font-size: small;
+  display: block;
+}
+.video-thumbnail.current-video + .video-thumbnail {
+  background-color: darkslateblue;
+}
+.video-thumbnail.current-video + .video-thumbnail::after {
+  content: "Playing Next";
+  font-size: small;
+  display: block;
+}
+
 .viewer {
   display: flex;
   width: 100%;
@@ -40,6 +64,16 @@ body {
 
 .viewer main {
   flex-grow: 2;
+}
+
+@media only screen and (max-width: 1100px)  {
+  .viewer {
+    display: block;
+  }
+  .viewer aside {
+    display: flex;
+    flex-wrap: wrap;
+  }
 }
 
 .viewer main video {

@@ -2,6 +2,15 @@ window.__videoPlayer__ = null;
 function getPlayer () {
   if (!window.__videoPlayer__) {
     window.__videoPlayer__ = document.getElementById('videoPlayer')
+    window.__videoPlayer__.addEventListener('ended', () => {
+      let nextVideo = document.querySelector('.video-thumbnail.current-video + .video-thumbnail')
+      if (nextVideo) {
+        console.log('Video Ended, Playing Next')
+        nextVideo.click()
+      } else {
+        console.log('Video Ended')
+      }
+    })
   }
   return window.__videoPlayer__
 }

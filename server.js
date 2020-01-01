@@ -3,8 +3,18 @@ const express = require('express')
 const fs = require('fs')
 const path = require('path')
 const app = express()
-const { port, mountPath } = require('./config')
+const { port, mountPath, ready = null, log = null } = require('./config')
 const { videoFiles, organizedVideoFiles, sortedVideoFiles } = require('./mediaFiles')
+
+const LOG_ITEM = (...logData) => {
+  logData = logData.join(' ')
+  let time = new Date()
+  if (log) {
+    log(logData, time.toISOString())
+  } else {
+    console.log(logData, time.toISOString())
+  }
+}
 
 app.use('/assets', express.static(path.join(__dirname, 'public')))
 app.set('view engine', 'ejs');
@@ -49,7 +59,7 @@ app.get('/video/:movieName', function(req, res) {
       'Content-Length': chunksize,
       'Content-Type': 'video/mp4',
     }
-    console.log(`[206] SERVING VIDEO "${path}"`)
+    LOG_ITEM(`[206] SERVING VIDEO "${path}" to <${req.connection.remoteAddress}>`)
     res.writeHead(206, head);
     file.pipe(res);
   } else {
@@ -57,10 +67,15 @@ app.get('/video/:movieName', function(req, res) {
       'Content-Length': fileSize,
       'Content-Type': 'video/mp4',
     }
-    console.log(`[200] SERVING VIDEO "${path}"`)
+    LOG_ITEM(`[200] SERVING VIDEO "${path}" to <${req.connection.remoteAddress}>`)
     res.writeHead(200, head)
     fs.createReadStream(path).pipe(res)
   }
 });
 
-app.listen(port, () => console.log(`${mountPath} media hosted at\n  http://localhost:${port}\n  http://${ip.address()}:${port}`))
+app.listen(port, () => {
+  let localhostURL = port === 80 ? 'http://localhost/' : `http://localhost:${port}/`
+  let ipURL = port === 80 ? `http://${ip.address()}/` : `http://${ip.address()}:${port}/`
+  LOG_ITEM(`${mountPath} media hosted at\n  ${localhostURL}\n  ${ipURL}`)
+  ready && ready(ipURL)
+})

@@ -8,14 +8,14 @@
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
+  <%- include('nav') %>
   <div class="browser">
-    <h1 class="title">VIDEO CAPTAIN</h1>
     <% videos.forEach(([ show, episodes ]) => { %>
       <details class="show" open>
         <summary><h2><%= show.replace('/', '').replace(/\//g, ': ').replace(/^\d\d /, '') %></h2></summary>
         <section class="episodes">
           <% episodes.forEach(({ file }) => { %>
-            <a class="video-thumbnail" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
+            <a class="video-thumbnail elevation-1 interact" href="/watch/<%- encodeURIComponent(file) %>"><%= file.replace(/\.\w+$/, '').replace(/^\d\d /, '') %></a>
           <% }) %>
           <!-- HACK to get the last row to always justify nicely -->
           <span class="hack-episode-alignment"></span>

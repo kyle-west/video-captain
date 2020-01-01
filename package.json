@@ -1,7 +1,7 @@
 {
   "name": "video-captain",
   "version": "0.1.0",
-  "description": "Host your home media at a mount path",
+  "description": "Serve up a folder of video files for your pleasure of viewing on a locally hosted server.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

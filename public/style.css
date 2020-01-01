@@ -23,9 +23,11 @@ body {
 .episodes {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 
-.video-thumbnail {
+.video-thumbnail,
+.hack-episode-alignment {
   width: 200px;
   height: 150px;
   display: block;
@@ -35,6 +37,10 @@ body {
   text-decoration: none;
   margin: 5px;
   padding: 15px;
+}
+.hack-episode-alignment {
+  background: none;
+  height: 0;
 }
 .video-thumbnail:hover {
   text-decoration: underline;
@@ -73,6 +79,7 @@ body {
   .viewer aside {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-evenly;
   }
 }
 

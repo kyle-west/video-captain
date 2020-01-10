@@ -21,6 +21,9 @@ Next, you will need to set up your `config.js` in the root of video captain. It 
 module.exports = {
   mountPath: '/media/videos/',  // [REQUIRED] path to the folder you want to serve videos from
   port: 8080,                   // [OPTIONAL] the port you want the server to host at (default 5555)
+  settingsConfig: {             // [OPTIONAL] make some custom preferences for how the system runs
+    clientCanShutdownServer: true,  // allow setting on client side to shutdown server
+  }
 }
 ```
 

@@ -2,6 +2,25 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  --bg: white;
+  --bg-interactive-static: darkslategrey;
+  --bg-interactive-active: darkblue;
+  --bg-interactive-active-secondary: darkslateblue;
+  --text-primary: black;
+  --text-secondary: #888;
+  --text-reversed: white;
+
+  background-color: var(--bg);
+  color: var(--text-primary);
+}
+body.dark-mode {
+  --bg: black;
+  --bg-interactive-static: darkslategrey;
+  --bg-interactive-active: darkblue;
+  --bg-interactive-active-secondary: darkslateblue;
+  --text-primary: white;
+  --text-secondary: #888;
+  --text-reversed: white;
 }
 
 nav {
@@ -13,24 +32,37 @@ nav {
   width: 100%;
   z-index: 1;
   display: block;
-  background-color: white;
+  background-color: var(--bg);
   padding: 15px;
   box-sizing: border-box; 
 }
 nav a,
 nav a:hover,
 nav a:visited {
-  color: black;
+  color: var(--text-primary);
   text-decoration: none;
 }
 nav a:hover {
   text-decoration: underline;
 }
-nav .now-playing {
-  color: #888;
+nav .now-playing,
+nav .settings-btn {
+  color: var(--text-secondary);
   font-size: 15px;
   vertical-align: middle;
   margin-left: 30px;
+}
+nav .settings-btn {
+  float: right;
+  width: 40px;
+  height: 40px;
+}
+nav .settings-btn svg {
+  fill: var(--text-secondary);
+  transition: fill 0.3s;
+}
+nav .settings-btn svg:hover {
+  fill: var(--text-primary);
 }
 
 
@@ -65,8 +97,8 @@ details summary * {
   height: 150px;
   display: block;
   font-size: 32px;
-  background-color: darkslategrey;
-  color: white;
+  background-color: var(--bg-interactive-static);
+  color: var(--text-reversed);
   text-decoration: none;
   margin: 15px;
   padding: 15px;
@@ -82,7 +114,7 @@ details summary * {
 }
 
 .video-thumbnail.current-video {
-  background-color: darkblue;
+  background-color: var(--bg-interactive-active);
 }
 .video-thumbnail.current-video::after {
   content: "Currently Playing";
@@ -90,7 +122,7 @@ details summary * {
   display: block;
 }
 .video-thumbnail.current-video + .video-thumbnail {
-  background-color: darkslateblue;
+  background-color: var(--bg-interactive-active-secondary);
 }
 .video-thumbnail.current-video + .video-thumbnail::after {
   content: "Playing Next";
@@ -133,23 +165,23 @@ details summary * {
 /* ELEVATIONS box-shadows borrowed from https://codepen.io/sdthornton/pen/wBZdXq */
 .elevation-1 {
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  transition: all 0.2s ease;
+  transition: box-shadow 0.3s ease;
 }
-.elevation-1.interact:hover {
+.elevation-1.interact:not(:disabled):hover {
   box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 .elevation-2 {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-  transition: all 0.2s ease;
+  transition: box-shadow 0.3s ease;
 }
-.elevation-2.interact:hover {
+.elevation-2.interact:not(:disabled):hover {
   box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 .elevation-3 {
   box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-  transition: all 0.2s ease;
+  transition: box-shadow 0.3s ease;
 }
-.elevation-3.interact:hover {
+.elevation-3.interact:not(:disabled):hover {
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }
 .elevation-4 {
@@ -157,4 +189,43 @@ details summary * {
 }
 .elevation-5 {
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+}
+/* .dark-mode .elevation-1 {
+  background-color: #111;
+}
+.dark-mode .elevation-2 {
+  background-color: #222;
+} */
+.dark-mode .elevation-3 {
+  background-color: #333;
+}
+
+button {
+  all: unset;
+  background: var(--bg-interactive-active);
+  opacity: 0.8;
+  padding: 10px;
+  border-radius: 5px;
+  color: var(--text-reversed);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+button:disabled {
+  background: var(--bg-interactive-active-secondary);
+  filter: grayscale(100%);
+  opacity: .7;
+  cursor: not-allowed;
+}
+button:disabled:hover {
+  opacity: .7;
+}
+button:hover {
+  opacity: 1;
+}
+
+
+main.low-content {
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
 }

@@ -3,7 +3,7 @@ const express = require('express')
 const fs = require('fs')
 const path = require('path')
 const app = express()
-const { port, mountPath, ready = null, log = null } = require('./config')
+const { port, mountPath, ready = null, log = null, settingsConfig } = require('./config')
 const { videoFiles, organizedVideoFiles, sortedVideoFiles } = require('./mediaFiles')
 
 const LOG_ITEM = (...logData) => {
@@ -71,6 +71,20 @@ app.get('/video/:movieName', function(req, res) {
     LOG_ITEM(`[200] SERVING VIDEO "${path}" to <${req.connection.remoteAddress}>`)
     res.writeHead(200, head)
     fs.createReadStream(path).pipe(res)
+  }
+});
+
+app.get('/settings', (req, res) => {
+  res.render('settings', { settings: settingsConfig || {} });
+});
+app.post('/shutdown-server', (req, res) => {
+  if (settingsConfig.clientCanShutdownServer) {
+    LOG_ITEM("Received command to shutdown. Method allowed, shutting server down now.")
+    res.sendStatus(200)
+    process.exit(200);
+  } else {
+    LOG_ITEM("Received command to shutdown. Method NOT allowed, ignoring.")
+    res.sendStatus(403)
   }
 });
 

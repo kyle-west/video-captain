@@ -34,9 +34,10 @@ nav {
   z-index: 1;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   background-color: var(--bg);
   padding: 15px;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 nav a,
 nav a:hover,

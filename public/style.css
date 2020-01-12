@@ -15,6 +15,7 @@ body {
 }
 body.dark-mode {
   --bg: black;
+  --bg-secondary: #222;
   --bg-interactive-static: darkslategrey;
   --bg-interactive-active: darkblue;
   --bg-interactive-active-secondary: darkslateblue;
@@ -31,7 +32,8 @@ nav {
   left: 0;
   width: 100%;
   z-index: 1;
-  display: block;
+  display: flex;
+  justify-content: space-between;
   background-color: var(--bg);
   padding: 15px;
   box-sizing: border-box; 
@@ -41,6 +43,7 @@ nav a:hover,
 nav a:visited {
   color: var(--text-primary);
   text-decoration: none;
+  margin-right: 30px;
 }
 nav a:hover {
   text-decoration: underline;
@@ -53,7 +56,6 @@ nav .settings-btn {
   margin-left: 30px;
 }
 nav .settings-btn {
-  float: right;
   width: 40px;
   height: 40px;
 }
@@ -63,6 +65,21 @@ nav .settings-btn svg {
 }
 nav .settings-btn svg:hover {
   fill: var(--text-primary);
+}
+nav #search-bar {
+  flex-grow: 2;
+  border: none;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0px 15px;
+  font-size: 24px;
+  border: 1px solid var(--text-secondary);
+  border-radius: 5px;
+}
+nav #search-bar:hover,
+nav #search-bar:focus {
+  outline: none;
+  border: 2px solid var(--text-primary);
 }
 
 
@@ -111,6 +128,9 @@ details summary * {
 }
 .video-thumbnail:hover {
   opacity: 1;
+}
+.hide {
+  display: none;
 }
 
 .video-thumbnail.current-video {
@@ -190,12 +210,12 @@ details summary * {
 .elevation-5 {
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }
-/* .dark-mode .elevation-1 {
+.dark-mode .elevation-1 {
   background-color: #111;
 }
 .dark-mode .elevation-2 {
   background-color: #222;
-} */
+}
 .dark-mode .elevation-3 {
   background-color: #333;
 }

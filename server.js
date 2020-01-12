@@ -31,7 +31,7 @@ app.get('/watch/:movieName', (req, res) => {
 });
 
 // Modified from https://gist.github.com/BetterProgramming/3bf5d66b0285a2690de684d46c4cabb4
-// for better security and robstness
+// for better security and robustness
 app.get('/video/:movieName', function(req, res) {
   const { movieName } = req.params
   const { file, folder, NOT_FOUND } = videoFiles.find(x => x.file === movieName) || { NOT_FOUND: 404 }

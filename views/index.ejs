@@ -11,7 +11,7 @@
   <%- include('nav') %>
   <div class="browser">
     <% videos.forEach(([ show, episodes ]) => { %>
-      <details class="show" open>
+      <details class="show" <%= show.substr(1).includes('/') ? '' : 'open' %>>
         <summary><h2><%= show.replace('/', '').replace(/\//g, ': ').replace(/^\d\d /, '') %></h2></summary>
         <section class="episodes">
           <% episodes.forEach(({ file }) => { %>

@@ -10,7 +10,7 @@ body {
   --text-secondary: #888;
   --text-reversed: white;
 
-  background-color: var(--bg);
+  background: var(--bg);
   color: var(--text-primary);
 }
 body.dark-mode {
@@ -35,7 +35,7 @@ nav {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  background-color: var(--bg);
+  background: var(--bg);
   padding: 15px;
   box-sizing: border-box;
 }
@@ -46,7 +46,7 @@ nav a:visited {
   text-decoration: none;
   margin-right: 30px;
 }
-nav a:hover {
+nav a:hover .title {
   text-decoration: underline;
 }
 nav .now-playing,
@@ -56,6 +56,7 @@ nav .settings-btn {
   vertical-align: middle;
   margin-left: 30px;
 }
+
 nav .settings-btn {
   width: 40px;
   height: 40px;
@@ -89,8 +90,20 @@ nav #search-bar:focus {
   margin: auto;
 }
 
+details {
+  transition: all 0.3s;
+}
+
+details:focus-within:not([open]) {
+  background: var(--bg-interactive-active);
+}
+
 details summary {
   margin: 20px;
+  font-size: 32px;
+}
+details:not([open]) summary {
+  outline: none;
 }
 details:first-of-type {
   margin-top: 50px;
@@ -110,12 +123,13 @@ details summary * {
 }
 
 .video-thumbnail,
+details:not([open]),
 .hack-episode-alignment {
   width: 200px;
   height: 150px;
   display: block;
   font-size: 32px;
-  background-color: var(--bg-interactive-static);
+  background: var(--bg-interactive-static);
   color: var(--text-reversed);
   text-decoration: none;
   margin: 15px;
@@ -127,6 +141,7 @@ details summary * {
   background: none;
   height: 0;
 }
+details:not([open]):hover,
 .video-thumbnail:hover {
   opacity: 1;
 }
@@ -134,8 +149,13 @@ details summary * {
   display: none;
 }
 
+details:not([open]) {
+  width: auto;
+  height: fit-content;
+}
+
 .video-thumbnail.current-video {
-  background-color: var(--bg-interactive-active);
+  background: var(--bg-interactive-active);
 }
 .video-thumbnail.current-video::after {
   content: "Currently Playing";
@@ -143,7 +163,7 @@ details summary * {
   display: block;
 }
 .video-thumbnail.current-video + .video-thumbnail {
-  background-color: var(--bg-interactive-active-secondary);
+  background: var(--bg-interactive-active-secondary);
 }
 .video-thumbnail.current-video + .video-thumbnail::after {
   content: "Playing Next";
@@ -171,10 +191,15 @@ details summary * {
   }
 }
 
+*:focus:fullscreen {
+  outline: none;
+}
+
 .viewer main video {
   width: calc(100% - 100px);
   margin: 50px;
   height: auto;
+  max-height: 80vh;
 }
 
 .viewer aside {
@@ -211,14 +236,14 @@ details summary * {
 .elevation-5 {
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }
-.dark-mode .elevation-1 {
-  background-color: #111;
+.dark-mode .elevation-1:not(.interact) {
+  background: #111;
 }
-.dark-mode .elevation-2 {
-  background-color: #222;
+.dark-mode .elevation-2:not(.interact) {
+  background: #222;
 }
-.dark-mode .elevation-3 {
-  background-color: #333;
+.dark-mode .elevation-3:not(.interact) {
+  background: #333;
 }
 
 button {

@@ -19,10 +19,10 @@ Next, you will need to set up your `config.js` in the root of video captain. It 
 
 ```js
 module.exports = {
-  mountPath: '/media/videos/',  // [REQUIRED] path to the folder you want to serve videos from
-  port: 8080,                   // [OPTIONAL] the port you want the server to host at (default 5555)
-  settingsConfig: {             // [OPTIONAL] make some custom preferences for how the system runs
-    clientCanShutdownServer: true,  // allow setting on client side to shutdown server
+  mountPath: '/media/videos/',      // [REQUIRED] path to the folder you want to serve videos from
+  port: process.env.PORT || 8080,   // [OPTIONAL] the port you want the server to host at (default 5555)
+  settingsConfig: {                 // [OPTIONAL] make some custom preferences for how the system runs
+    clientCanShutdownServer: true,  // allow setting on client side to shutdown server exits with (200) status
   }
 }
 ```
@@ -44,3 +44,33 @@ module.exports = {
   ...
 }
 ```
+
+# Best practices for using Video Captain
+
+This program can best be ran by making a runnable script titled `videocaptain` which allows you to bootstrap onto the video captain
+life cycle.
+
+In the following example, running `videocaptain` will automatically mount the drive if it is not mounted already, then boot up the 
+server. The last bit of this checks makes `videocaptain nighttime` turn off the computer if the client shuts down the server.
+
+```sh
+#!/bin/bash
+
+# mount the media drive if it is not already mounted 
+if [ ! -d /media/videos ]; then # this is the same path as what is in `config.js`
+  echo "Mounting Media Drive at /media"
+  sudo mkdir -p /media
+  sudo mount /dev/sda5 /media
+fi
+
+# go to the local project and run the server
+cd ~/dev/video-captain
+sudo PORT=80 node server.js # set the port to 80 because we want to host at `http://<computer-name>.local`
+if [ $? -eq 200 ] && [ "$1" == "nighttime" ]; then
+  echo "The program was shutdown with an exit code of [200], which means that it was shutdown intentionally by the client application"
+  echo "Running > shutdown now"
+  shutdown now
+fi
+```
+
+Note that running with `PORT=80` will host on your LAN or WLAN at `http://<your-computer-name>.local`.

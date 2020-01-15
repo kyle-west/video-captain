@@ -30,6 +30,10 @@
     
     function search(query) {
       console.log('searching for: ', query)
+      
+      let details = [...document.querySelectorAll('details')]
+      details.forEach(d => d.open = true)
+      
       let thumbnails = [...document.querySelectorAll('.video-thumbnail')]
       thumbnails
         .map(x => (x.classList.remove('hide'), x))

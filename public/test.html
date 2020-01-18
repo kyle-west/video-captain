@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>VIDEO CAPTAIN</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <nav-bar></nav-bar>
+  <query-router>
+    <collection-browser default-route page="browse" bound-endpoint="/videos"></collection-browser>
+    <watch-video page="watch"></watch-video>
+  </query-router>
+  
+  <script src="/assets/utils.js"></script>
+  <script src="/components/nav-bar.js"></script>
+  <script src="/components/collection-browser.js"></script>
+  <script src="/components/query-router.js"></script>
+  <script src="/components/watch-video.js"></script>
+</body>
+</html>

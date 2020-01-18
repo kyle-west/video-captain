@@ -17,11 +17,16 @@ const LOG_ITEM = (...logData) => {
 }
 
 app.use('/assets', express.static(path.join(__dirname, 'public')))
+app.use('/components', express.static(path.join(__dirname, 'components')))
 app.use('/favicon.ico', express.static(path.join(__dirname, 'public/favicon.ico')))
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
   res.render('index', { videos : sortedVideoFiles });
+});
+
+app.get('/videos', (req, res) => {
+  res.json(sortedVideoFiles)
 });
 
 app.get('/watch/:movieName', (req, res) => {

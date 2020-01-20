@@ -1,33 +1,42 @@
 ((window) => {
+  const { Router, utils: { _ } } = window
   const ELEMENT_TAG = 'query-router'
+
+  function nowPlayingMiddleware (ctx, next) {
+    const { nowPlaying } = ctx.params
+    const nowPlayingTitle = nowPlaying ? decodeURIComponent(nowPlaying).replace(/\.\w+$/, '').replace(/^\d\d /, '') : ''
+    const navBar = document.querySelector('nav-bar')
+    navBar.setAttribute('now-playing', nowPlayingTitle)
+    document.title = `VIDEO CAPTAIN ${_(nowPlayingTitle && `| ${nowPlayingTitle}`)}` 
+  }
 
   class QueryRouter extends HTMLElement {
     connectedCallback () {
       this._childList = [...this.children]
       this.routes = Object.fromEntries(this._childList.map(x => [x.getAttribute('page'),x]))
       this.defaultRoute = this._childList.find(x => x.getAttribute('default-route') !== null) || this._childList[0]
-      console.log('ROUTES: ', this.routes)
-      console.log('DEFAULT: ', this.defaultRoute)
 
-      this._pageChange = this.pageChange.bind(this)
-      
-      this.pageChange()
-      
-      // window.addEventListener('popstate', this._pageChange)
-      // window.addEventListener('popstate', this._pageChange)
+      const router = new Router({ registerOn: window })
+      router.use(nowPlayingMiddleware)
+      router.use('/watch/:nowPlaying', (ctx) => this.render(this.routes.watch, ctx))
+      router.use('/:page/:item?', (ctx) => this.render(this.routes[ctx.params.page] || this.defaultRoute, ctx))
+      router.use(['/', '*'], (ctx) => this.render(this.defaultRoute, ctx))
+      router.start()
+      this.router = router
     }
-    
-    pageChange () {
-      const ctx = Object.fromEntries(window.location.search.slice(1).split('&').map(x => x.split('=')));
-      Object.values(this.routes || {}).forEach(child => child.classList.add('hide'));
-      const newPage = (this.routes[ctx.page] || this.defaultRoute)
-      Object.entries(ctx).forEach(([k,v]) => newPage.setAttribute(k,v))
-      newPage.classList.remove('hide');
-    }
-    
+   
     disconnectedCallback () {
-      // window.removeEventListener('pushstate', this._pageChange)
-      // window.removeEventListener('popstate', this._pageChange)
+      this.router.unregister()
+    }
+
+    render (page, ctx) {
+      while (this.firstChild) {
+        this.removeChild(this.firstChild);
+      }
+      this.appendChild(page)
+      
+      const { nowPlaying } = ctx.params
+      if (nowPlaying) page.setAttribute('now-playing', nowPlaying)
     }
   }
 

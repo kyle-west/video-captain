@@ -19,21 +19,22 @@ const LOG_ITEM = (...logData) => {
 app.use('/assets', express.static(path.join(__dirname, 'public')))
 app.use('/components', express.static(path.join(__dirname, 'components')))
 app.use('/favicon.ico', express.static(path.join(__dirname, 'public/favicon.ico')))
+app.use('/packages/dragon-router', express.static(path.join(__dirname, 'node_modules/dragon-router/dist/dragon-router.min.js')))
 app.set('view engine', 'ejs');
 
-app.get('/', (req, res) => {
-  res.render('index', { videos : sortedVideoFiles });
-});
+// app.get('/', (req, res) => {
+//   res.render('index', { videos : sortedVideoFiles });
+// });
 
 app.get('/videos', (req, res) => {
   res.json(sortedVideoFiles)
 });
 
-app.get('/watch/:movieName', (req, res) => {
-  const { movieName } = req.params
-  const alikeVideos = videoFiles.find(x => x.file === movieName).folder
-  res.render('watch', { movieName, additionalEpisodes: organizedVideoFiles[alikeVideos] || organizedVideoFiles[''] });
-});
+// app.get('/watch/:movieName', (req, res) => {
+//   const { movieName } = req.params
+//   const alikeVideos = videoFiles.find(x => x.file === movieName).folder
+//   res.render('watch', { movieName, additionalEpisodes: organizedVideoFiles[alikeVideos] || organizedVideoFiles[''] });
+// });
 
 // Modified from https://gist.github.com/BetterProgramming/3bf5d66b0285a2690de684d46c4cabb4
 // for better security and robustness
@@ -91,6 +92,10 @@ app.post('/shutdown-server', (req, res) => {
     LOG_ITEM("Received command to shutdown. Method NOT allowed, ignoring.")
     res.sendStatus(403)
   }
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/client-rendered.html'))
 });
 
 app.listen(port, () => {

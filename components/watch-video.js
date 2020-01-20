@@ -48,8 +48,6 @@
 
     render () {
       const { nowPlaying } = this
-      const navBar = document.querySelector('nav-bar')
-      navBar.setAttribute('now-playing', nowPlaying ? decodeURIComponent(nowPlaying) : '')
 
       if (!nowPlaying) {
         return this.innerHTML = 'No video selected' 

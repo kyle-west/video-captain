@@ -15,7 +15,7 @@
     }
   
     connectedCallback () {
-      this.renderLoadingState()
+      this.render()
     }
     
     async fetchData () {
@@ -44,7 +44,7 @@
               </summary>
               <section class="episodes">
                 ${_(episodes.map(({ file }) => `
-                  <a class="video-thumbnail elevation-1 interact" href="?page=watch&now-playing=${encodeURIComponent(file)}">
+                  <a class="video-thumbnail elevation-1 interact" href="/watch/${encodeURIComponent(file)}">
                     ${file.replace(/\.\w+$/, '').replace(/^\d\d /, '')}
                   </a>
                 `))}

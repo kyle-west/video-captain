@@ -17,12 +17,11 @@
     }
 
     render () {
-      const { nowPlaying = '' } = this
-      const nowPlayingTitle = nowPlaying.replace(/\.\w+$/, '').replace(/^\d\d /, '')
+      const { nowPlaying } = this
       this.innerHTML = `
         <nav class="elevation-3">
-          <a href="?page=browse"><span class="title">Video Captain</span>
-            ${_(nowPlaying && `<span class="now-playing">Now Playing: ${nowPlayingTitle}</span>`)}
+          <a href="/"><span class="title">Video Captain</span>
+            ${_(nowPlaying && `<span class="now-playing">Now Playing: ${nowPlaying}</span>`)}
           </a>
           <input id="search-bar"/>
           <a href="/settings" class="settings-btn">

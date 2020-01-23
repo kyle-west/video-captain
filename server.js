@@ -22,19 +22,17 @@ app.use('/favicon.ico', express.static(path.join(__dirname, 'public/favicon.ico'
 app.use('/packages/dragon-router', express.static(path.join(__dirname, 'node_modules/dragon-router/dist/dragon-router.min.js')))
 app.set('view engine', 'ejs');
 
-// app.get('/', (req, res) => {
-//   res.render('index', { videos : sortedVideoFiles });
-// });
-
-app.get('/videos', (req, res) => {
+app.get('/data/videos', (req, res) => {
   res.json(sortedVideoFiles)
 });
 
-// app.get('/watch/:movieName', (req, res) => {
-//   const { movieName } = req.params
-//   const alikeVideos = videoFiles.find(x => x.file === movieName).folder
-//   res.render('watch', { movieName, additionalEpisodes: organizedVideoFiles[alikeVideos] || organizedVideoFiles[''] });
-// });
+app.get('/data/videos/related/:movieName', (req, res) => {
+  const { movieName } = req.params
+  const alikeVideos = videoFiles.find(x => x.file === movieName).folder
+  // match format of `sortedVideoFiles`
+  res.json([[alikeVideos , organizedVideoFiles[alikeVideos] || organizedVideoFiles['']]])
+});
+
 
 // Modified from https://gist.github.com/BetterProgramming/3bf5d66b0285a2690de684d46c4cabb4
 // for better security and robustness
@@ -83,6 +81,7 @@ app.get('/video/:movieName', function(req, res) {
 app.get('/settings', (req, res) => {
   res.render('settings', { settings: settingsConfig || {} });
 });
+
 app.post('/shutdown-server', (req, res) => {
   if (settingsConfig.clientCanShutdownServer) {
     LOG_ITEM("Received command to shutdown. Method allowed, shutting server down now.")

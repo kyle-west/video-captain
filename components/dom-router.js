@@ -1,6 +1,6 @@
 ((window) => {
   const { Router, utils: { _ } } = window
-  const ELEMENT_TAG = 'query-router'
+  const ELEMENT_TAG = 'dom-router'
 
   function nowPlayingMiddleware (ctx, next) {
     const { nowPlaying } = ctx.params
@@ -10,13 +10,13 @@
     document.title = `VIDEO CAPTAIN ${_(nowPlayingTitle && `| ${nowPlayingTitle}`)}` 
   }
 
-  class QueryRouter extends HTMLElement {
+  class DOMRouter extends HTMLElement {
     connectedCallback () {
       this._childList = [...this.children]
       this.routes = Object.fromEntries(this._childList.map(x => [x.getAttribute('page'),x]))
       this.defaultRoute = this._childList.find(x => x.getAttribute('default-route') !== null) || this._childList[0]
 
-      const router = new Router({ registerOn: window })
+      const router = new Router({ registerOn: window, routerId: 'video-captain' })
       router.use(nowPlayingMiddleware)
       router.use('/watch/:nowPlaying', (ctx) => this.render(this.routes.watch, ctx))
       router.use('/:page/:item?', (ctx) => this.render(this.routes[ctx.params.page] || this.defaultRoute, ctx))
@@ -41,9 +41,9 @@
   }
 
   if ('customElements' in window) {
-    customElements.define(ELEMENT_TAG, QueryRouter);
+    customElements.define(ELEMENT_TAG, DOMRouter);
   } else {
-    document.registerElement(ELEMENT_TAG, {prototype: Object.create(QueryRouter.prototype)});
+    document.registerElement(ELEMENT_TAG, {prototype: Object.create(DOMRouter.prototype)});
   }
 
 })(window)

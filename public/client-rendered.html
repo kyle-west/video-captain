@@ -9,16 +9,16 @@
 </head>
 <body>
   <nav-bar></nav-bar>
-  <query-router>
-    <collection-browser default-route page="browse" bound-endpoint="/videos"></collection-browser>
+  <dom-router>
+    <collection-browser default-route page="browse" bound-endpoint="/data/videos"></collection-browser>
     <watch-video page="watch"></watch-video>
-  </query-router>
+  </dom-router>
   
   <script src="/assets/utils.js"></script>
   <script src="/components/nav-bar.js"></script>
   <script src="/components/collection-browser.js"></script>
   <script src="/packages/dragon-router"></script>
-  <script src="/components/query-router.js"></script>
+  <script src="/components/dom-router.js"></script>
   <script src="/components/watch-video.js"></script>
 </body>
 </html>

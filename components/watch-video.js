@@ -2,43 +2,13 @@
   const { utils: { _ } } = window
   const ELEMENT_TAG = 'watch-video'
 
-  window.__videoPlayer__ = null;
-  function getPlayer () {
-    if (!window.__videoPlayer__) {
-      window.__videoPlayer__ = document.getElementById('videoPlayer')
-      window.__videoPlayer__.addEventListener('ended', () => {
-        let nextVideo = document.querySelector('.video-thumbnail.current-video + .video-thumbnail')
-        if (nextVideo) {
-          console.log('Video Ended, Playing Next')
-          nextVideo.click()
-        } else {
-          console.log('Video Ended')
-        }
-      })
-    }
-    return window.__videoPlayer__
-  }
-
-  document.addEventListener('keydown', (e) => {
-    const { key } = e
-    console.log(key)
-    const player = getPlayer()
-    switch(key) {
-      case 'f':
-        e.preventDefault()
-        player.requestFullscreen()
-        player.focus()
-        break;
-    }
-  })
-
   class WatchEpisode extends HTMLElement {
-    static get observedAttributes() { return ['now-playing']; }
+    static get observedAttributes() { return ['now-playing', 'related-videos']; }
 
     attributeChangedCallback (name, oldValue, newValue) {
       if (oldValue !== newValue) {
         this[_.attrToProp(name)] = newValue;
-        if (name === 'now-playing') this.render()
+        this.render()
       }
     }
   
@@ -46,8 +16,20 @@
       this.render()
     }
 
+    cleanUpListeners () {
+      if (this.listeners) {
+        this.listeners.forEach(([element, listener]) => element.removeEventListener(...listener))
+      }
+      this.listeners = []
+    }
+    
+    disconnectedCallback () {
+      this.cleanUpListeners()
+    }
+    
     render () {
-      const { nowPlaying } = this
+      let { nowPlaying, relatedVideos = '[]' } = this
+      relatedVideos = JSON.parse(relatedVideos)
 
       if (!nowPlaying) {
         return this.innerHTML = 'No video selected' 
@@ -61,19 +43,50 @@
             </video>
           </main>
           <aside>
-            <span class="hack-episode-alignment"></span>
-            <span class="hack-episode-alignment"></span>
-            <span class="hack-episode-alignment"></span>
-            <span class="hack-episode-alignment"></span>
-            <span class="hack-episode-alignment"></span>
-            <span class="hack-episode-alignment"></span>
-            <span class="hack-episode-alignment"></span>
-            <span class="hack-episode-alignment"></span>
+            <collection-browser related-to="${decodeURIComponent(nowPlaying)}" bound-endpoint="/data/videos/related/${nowPlaying}"></collection-browser>
           </aside>
         </div>
       `;
 
-      getPlayer().focus()
+      this.setUpPlayer()
+    }
+    
+    setUpPlayer () {
+      this.cleanUpListeners()
+      const videoPlayer = this.querySelector('video')
+      this.listeners.push([
+        videoPlayer,
+        [
+          'ended', () => {
+            let nextVideo = document.querySelector('.video-thumbnail.current-video + .video-thumbnail')
+            if (nextVideo) {
+              console.log('Video Ended, Playing Next')
+              nextVideo.click()
+            } else {
+              console.log('Video Ended')
+            }
+          }
+        ]
+      ])
+
+      this.listeners.push([
+        videoPlayer,
+        [
+          'keydown', (e) => {
+            const { key } = e
+            switch(key) {
+              case 'f':
+                e.preventDefault()
+                videoPlayer.requestFullscreen()
+                videoPlayer.focus()
+                break;
+            }
+          }
+        ]
+      ])
+
+      this.listeners.forEach(([element, listener]) => element.addEventListener(...listener))
+      videoPlayer.focus()
     }
   }
 

@@ -4,7 +4,6 @@
   "description": "Serve up a folder of video files for your pleasure of viewing on a locally hosted server.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "repository": {
@@ -18,10 +17,8 @@
   },
   "homepage": "https://github.com/kyle-west/video-captain#readme",
   "dependencies": {
-    "dragon-router": "^1.1.2",
-    "ejs": "^3.0.1",
     "express": "^4.17.1",
-    "ip": "^1.1.5",
-    "node-fetch": "^2.6.0"
+    "dragon-router": "^1.1.2",
+    "ip": "^1.1.5"
   }
 }

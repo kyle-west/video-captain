@@ -1,11 +1,19 @@
-const ip = require("ip");
+// ----------------------------------------------------------------------------------------
+// General Libraries 
+// ----------------------------------------------------------------------------------------
 const express = require('express')
 const fs = require('fs')
 const path = require('path')
-const app = express()
-const { port, mountPath, ready = null, log = null, settingsConfig } = require('./config')
+const ip = require("ip");
+
+
+// ----------------------------------------------------------------------------------------
+// App Specific Configs and Utils
+// ----------------------------------------------------------------------------------------
+const { port, mountPath, ready = null, log = null, settingsConfig = {} } = require('./config')
 const { videoFiles, organizedVideoFiles, sortedVideoFiles } = require('./mediaFiles')
 
+// Logging helper
 const LOG_ITEM = (...logData) => {
   logData = logData.join(' ')
   let time = new Date()
@@ -16,16 +24,17 @@ const LOG_ITEM = (...logData) => {
   }
 }
 
-app.use('/assets', express.static(path.join(__dirname, 'public')))
-app.use('/components', express.static(path.join(__dirname, 'components')))
-app.use('/favicon.ico', express.static(path.join(__dirname, 'public/favicon.ico')))
-app.use('/packages/dragon-router', express.static(path.join(__dirname, 'node_modules/dragon-router/dist/dragon-router.min.js')))
-app.set('view engine', 'ejs');
 
-app.get('/data/videos', (req, res) => {
-  res.json(sortedVideoFiles)
-});
+// ----------------------------------------------------------------------------------------
+// App Setup and Common Middleware
+// ----------------------------------------------------------------------------------------
+const app = express()
 
+
+// ----------------------------------------------------------------------------------------
+// Data Services
+// ----------------------------------------------------------------------------------------
+app.get('/data/videos', (req, res) => res.json(sortedVideoFiles));
 app.get('/data/videos/related/:movieName', (req, res) => {
   const { movieName } = req.params
   const alikeVideos = videoFiles.find(x => x.file === movieName).folder
@@ -33,10 +42,13 @@ app.get('/data/videos/related/:movieName', (req, res) => {
   res.json([[alikeVideos , organizedVideoFiles[alikeVideos] || organizedVideoFiles['']]])
 });
 
+app.get('/data/settings', (req, res) => res.json(settingsConfig));
 
-// Modified from https://gist.github.com/BetterProgramming/3bf5d66b0285a2690de684d46c4cabb4
-// for better security and robustness
-app.get('/video/:movieName', function(req, res) {
+
+// ----------------------------------------------------------------------------------------
+// Video Serving
+// ----------------------------------------------------------------------------------------
+app.get('/video/:movieName', (req, res) => {
   const { movieName } = req.params
   const { file, folder, NOT_FOUND } = videoFiles.find(x => x.file === movieName) || { NOT_FOUND: 404 }
   
@@ -45,44 +57,44 @@ app.get('/video/:movieName', function(req, res) {
     return res.sendStatus(NOT_FOUND)
   }
 
-  const path = `${mountPath}${folder}/${file}`
+  const itemPath = `${mountPath}${folder}/${file}`
 
-  const stat = fs.statSync(path)
-  const fileSize = stat.size
-  const range = req.headers.range
+  const { range } = req.headers
+  const { size } = fs.statSync(itemPath)
+  let streamConfig;
+
   if (range) {
-    const parts = range.replace(/bytes=/, "").split("-")
-    const start = parseInt(parts[0], 10)
-    const end = parts[1] 
-      ? parseInt(parts[1], 10)
-      : fileSize-1
-    const chunksize = (end-start)+1
-    const file = fs.createReadStream(path, {start, end})
-    const head = {
-      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+    LOG_ITEM(`[206] SERVING VIDEO "${itemPath}" to <${req.connection.remoteAddress}>`)
+
+    let [ start, end ] = range.replace(/bytes=/, "").split("-");
+    start = parseInt(start, 10);
+    end = end ? parseInt(end, 10) : size-1;
+
+    res.writeHead(206, {
+      'Content-Range': `bytes ${start}-${end}/${size}`,
       'Accept-Ranges': 'bytes',
-      'Content-Length': chunksize,
+      'Content-Length': (end - start) + 1,
       'Content-Type': 'video/mp4',
-    }
-    LOG_ITEM(`[206] SERVING VIDEO "${path}" to <${req.connection.remoteAddress}>`)
-    res.writeHead(206, head);
-    file.pipe(res);
+    });
+
+    streamConfig = { start, end }
   } else {
-    const head = {
-      'Content-Length': fileSize,
+    LOG_ITEM(`[200] SERVING VIDEO "${itemPath}" to <${req.connection.remoteAddress}>`)
+
+    res.writeHead(200, {
+      'Content-Length': size,
       'Content-Type': 'video/mp4',
-    }
-    LOG_ITEM(`[200] SERVING VIDEO "${path}" to <${req.connection.remoteAddress}>`)
-    res.writeHead(200, head)
-    fs.createReadStream(path).pipe(res)
+    });
   }
+
+  fs.createReadStream(itemPath, streamConfig).pipe(res);
 });
 
-app.get('/settings', (req, res) => {
-  res.render('settings', { settings: settingsConfig || {} });
-});
 
-app.post('/shutdown-server', (req, res) => {
+// ----------------------------------------------------------------------------------------
+// Command Services
+// ----------------------------------------------------------------------------------------
+app.post('/cmd/shutdown-server', (req, res) => {
   if (settingsConfig.clientCanShutdownServer) {
     LOG_ITEM("Received command to shutdown. Method allowed, shutting server down now.")
     res.sendStatus(200)
@@ -93,10 +105,23 @@ app.post('/shutdown-server', (req, res) => {
   }
 });
 
+
+// ----------------------------------------------------------------------------------------
+// Static Assets
+// ----------------------------------------------------------------------------------------
+app.use('/assets', express.static(path.join(__dirname, 'assets')))
+app.use('/components', express.static(path.join(__dirname, 'components')))
+app.use('/favicon.ico', express.static(path.join(__dirname, 'assets/favicon.ico')))
+app.use('/packages/dragon-router', express.static(path.join(__dirname, 'node_modules/dragon-router/dist/dragon-router.min.js')))
+
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/client-rendered.html'))
+  res.sendFile(path.join(__dirname, 'assets/index.html'))
 });
 
+
+// ----------------------------------------------------------------------------------------
+// Boot Up the Server
+// ----------------------------------------------------------------------------------------
 app.listen(port, () => {
   let localhostURL = port === 80 ? 'http://localhost/' : `http://localhost:${port}/`
   let ipURL = port === 80 ? `http://${ip.address()}/` : `http://${ip.address()}:${port}/`

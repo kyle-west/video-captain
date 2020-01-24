@@ -15,13 +15,15 @@
   
   
   // Preferences
-  window.getPref = function getPref(name, def) {
+  utils.getPref = function getPref(name, def) {
     return JSON.parse(window.localStorage.getItem(name)) || def
   }
-  window.setPref = function setPref(name, value) {
+  utils.setPref = function setPref(name, value) {
     return window.localStorage.setItem(name, JSON.stringify(value))
   }
-  if (window.getPref('dark-mode')) {
+
+  // SHOW CURRENT SETTINGS
+  if (utils.getPref('dark-mode')) {
     document.body.classList.add('dark-mode')
   }
 

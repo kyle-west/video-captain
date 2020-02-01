@@ -35,6 +35,7 @@ const app = express()
 // Data Services
 // ----------------------------------------------------------------------------------------
 app.get('/data/videos', (req, res) => res.json(sortedVideoFiles));
+app.get('/data/videos/flat', (req, res) => res.json(videoFiles));
 app.get('/data/videos/related/:movieName', (req, res) => {
   const { movieName } = req.params
   const alikeVideos = videoFiles.find(x => x.file === movieName).folder

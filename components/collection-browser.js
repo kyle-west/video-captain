@@ -1,5 +1,5 @@
 ((window) => {
-  const { utils: { _ } } = window
+  const { utils: { _, fetch } } = window
   const ELEMENT_TAG = 'collection-browser'
 
   class CollectionBrowser extends HTMLElement {
@@ -19,8 +19,7 @@
     }
     
     async fetchData () {
-      if (this.collection) return this.collection
-      this.collection = await window.fetch(this.boundEndpoint).then(r => r.json())
+      this.collection = await fetch(this.boundEndpoint)
       return this.collection
     }
     

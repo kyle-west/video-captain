@@ -19,6 +19,7 @@
       const router = new Router({ registerOn: window, routerId: 'video-captain' })
       router.use(nowPlayingMiddleware)
       router.use('/watch/:nowPlaying', (ctx) => this.render(this.routes.watch, ctx))
+      router.use('/:search/:fuzzyInput?', (ctx) => this.render(this.routes.search, ctx))
       router.use('/:page/:item?', (ctx) => this.render(this.routes[ctx.params.page] || this.defaultRoute, ctx))
       router.use(['/', '*'], (ctx) => this.render(this.defaultRoute, ctx))
       router.start()
@@ -35,8 +36,9 @@
       }
       this.appendChild(page)
       
-      const { nowPlaying } = ctx.params
+      const { nowPlaying, fuzzyInput } = ctx.params
       if (nowPlaying) page.setAttribute('now-playing', nowPlaying)
+      if (fuzzyInput) page.setAttribute('fuzzy-input', fuzzyInput)
     }
   }
 

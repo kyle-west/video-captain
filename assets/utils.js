@@ -27,6 +27,21 @@
     document.body.classList.add('dark-mode')
   }
 
+  const cachedData = {}
+  utils.fetch = (url, options = {}) => {
+    const { volatile } = options;
+    if (volatile || !cachedData[url]) {
+      cachedData[url] = window.fetch(url, options)
+    }
+    return cachedData[url].then(res => {
+      if (res instanceof Response && !res.bodyUsed) {
+        return res.clone();
+      } else {
+        return res;
+      }
+    }).then(r => r.json())
+  }
+
 
   window.utils = utils;
 })(window)

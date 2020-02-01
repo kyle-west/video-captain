@@ -24,6 +24,10 @@ body.dark-mode {
   --text-reversed: white;
 }
 
+label, button, input, summary, .interact {
+  cursor: pointer;
+}
+
 nav {
   font-size: 32px;
   position: -webkit-sticky; /* Safari */
@@ -95,7 +99,7 @@ details {
 }
 
 details:focus-within:not([open]) {
-  background: var(--bg-interactive-active);
+  opacity: 1;
 }
 
 details summary {

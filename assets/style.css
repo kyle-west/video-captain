@@ -88,8 +88,12 @@ nav #search-bar:focus {
   border: 2px solid var(--text-primary);
 }
 
+.results {
+  color: var(--text-secondary);
+  padding: 25px;
+}
 
-.browser {
+.browser, .results {
   width: 90%;
   margin: auto;
 }

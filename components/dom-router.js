@@ -3,11 +3,13 @@
   const ELEMENT_TAG = 'dom-router'
 
   function nowPlayingMiddleware (ctx, next) {
-    const { nowPlaying } = ctx.params
+    const { nowPlaying, fuzzyInput = '' } = ctx.params
     const nowPlayingTitle = nowPlaying ? decodeURIComponent(nowPlaying).replace(/\.\w+$/, '').replace(/^\d\d /, '') : ''
     const navBar = document.querySelector('nav-bar')
     navBar.setAttribute('now-playing', nowPlayingTitle)
-    document.title = `VIDEO CAPTAIN ${_(nowPlayingTitle && `| ${nowPlayingTitle}`)}` 
+    navBar.setAttribute('search-value', decodeURIComponent(fuzzyInput))
+    document.title = `VIDEO CAPTAIN ${_(nowPlayingTitle && `| ${nowPlayingTitle}`)}`
+    next()
   }
 
   class DOMRouter extends HTMLElement {
@@ -19,7 +21,7 @@
       const router = new Router({ registerOn: window, routerId: 'video-captain' })
       router.use(nowPlayingMiddleware)
       router.use('/watch/:nowPlaying', (ctx) => this.render(this.routes.watch, ctx))
-      router.use('/:search/:fuzzyInput?', (ctx) => this.render(this.routes.search, ctx))
+      router.use('/search/:fuzzyInput?', (ctx) => this.render(this.routes.search, ctx))
       router.use('/:page/:item?', (ctx) => this.render(this.routes[ctx.params.page] || this.defaultRoute, ctx))
       router.use(['/', '*'], (ctx) => this.render(this.defaultRoute, ctx))
       router.start()

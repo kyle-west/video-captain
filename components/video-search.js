@@ -30,14 +30,14 @@
     search() {
       const { collection, fuzzyInput } = this
       const matches = []
-      const fuzzy = fuzzyInput.toLowerCase();
+      const fuzzy = fuzzyInput.trim().toLowerCase();
       collection.forEach(item => {
         const { file, folder } = item
         const fileL = file.toLowerCase()
         const folderL = folder.toLowerCase()
         
         if (fileL.includes(fuzzy)) matches.push({ rank: 1, item, matchType: 'file' })
-        if (folderL.includes(fuzzy)) matches.push({ rank: 2, item, matchType: 'folder' })
+        // if (folderL.includes(fuzzy)) matches.push({ rank: 2, item, matchType: 'folder' })
       })
       return matches.sort((a, b) => a.rank - b.rank)
     }
@@ -46,9 +46,22 @@
       const { collection, fuzzyInput } = this
       if (!collection || !fuzzyInput) return this.renderLoadingState()
       const results = this.search()
+      console.log(results)
       this.innerHTML = `
-        <pre>${results.length} result${results.length === 1 ? '' : 's'} found for ${fuzzyInput}</pre>
-        <pre>${JSON.stringify(results,null,2)}</pre>
+        <pre class="results">${results.length} result${results.length === 1 ? '' : 's'} found for ${fuzzyInput}</pre>
+        <div class="browser">
+          <section class="episodes">
+            ${_(results.map(({ item : {file} }) => `
+              <a class="video-thumbnail elevation-1 interact" href="/watch/${encodeURIComponent(file)}">
+                ${file.replace(/\.\w+$/, '').replace(/^\d\d /, '')}
+              </a>
+            `))}
+            ${
+              // HACK to get the last row to always justify nicely
+              `<span class="hack-episode-alignment"></span>`.repeat(8)
+            }
+          </section>
+        </div>
       `
     }
   }

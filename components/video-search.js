@@ -31,16 +31,25 @@
       const { collection, fuzzyInput } = this
       const matches = {
         rank1: [],
-        rank2: [], 
+        rank2: [],
+        rank3: [],
       }
       const fuzzy = fuzzyInput.trim().toLowerCase();
+      const fuzzyRE = new RegExp(fuzzy.split('').join('\\w*'))
+      window.meh=fuzzyRE
+      console.log(fuzzyRE)
       collection.forEach(item => {
         const { file, folder } = item
         const fileL = file.toLowerCase()
         const folderL = folder.toLowerCase()
         
-        if (fileL.includes(fuzzy)) matches.rank1.push(item)
-        if (folderL.includes(fuzzy)) matches.rank2.push(item)
+        if (fileL.includes(fuzzy)) {
+          matches.rank1.push(item)
+        } else if (fuzzyRE.test(fileL)) {
+          matches.rank2.push(item)
+        } else if (folderL.includes(fuzzy)) {
+          matches.rank3.push(item)
+        }
       })
       matches.length = matches.rank1.length + matches.rank2.length
       return matches
@@ -65,6 +74,14 @@
           </section>`)}
           ${_(results.rank2.length > 0 && `<section class="episodes">
             ${_(results.rank2.map(({file, folder}) => `
+              <a class="video-thumbnail elevation-1 interact caption" style="--caption-text:'${_.folder(folder)}';background: var(--bg-interactive-active-secondary);" href="/watch/${encodeURIComponent(file)}">
+                ${_.file(file)}
+              </a>
+            `))}
+            ${`<span class="hack-episode-alignment"></span>`.repeat(8)}
+          </section>`)}
+          ${_(results.rank3.length > 0 && `<section class="episodes">
+            ${_(results.rank3.map(({file, folder}) => `
               <a class="video-thumbnail elevation-1 interact caption" style="--caption-text:'${_.folder(folder)}';" href="/watch/${encodeURIComponent(file)}">
                 ${_.file(file)}
               </a>

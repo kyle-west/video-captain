@@ -1,6 +1,6 @@
 {
   "name": "video-captain",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Serve up a folder of video files for your pleasure of viewing on a locally hosted server.",
   "main": "server.js",
   "scripts": {

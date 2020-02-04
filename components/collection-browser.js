@@ -35,7 +35,7 @@
         this.innerHTML = `
           ${_(episodes.map(({ file }) => `
             <a class="video-thumbnail elevation-1 interact ${ relatedTo === file ? 'current-video': ''}" href="/watch/${encodeURIComponent(file)}">
-              ${file.replace(/\.\w+$/, '').replace(/^\d\d /, '')}
+              ${_.file(file)}
             </a>
           `))}
           ${
@@ -50,13 +50,13 @@
               <details class="show" ${_(!show.substr(1).includes('/') && 'open')}>
                 <summary>
                   <h2>
-                    ${_(show.replace('/', '').replace(/\//g, ': ').replace(/^\d\d /, ''))}
+                    ${_(_.folder(show))}
                   </h2>
                 </summary>
                 <section class="episodes">
                   ${_(episodes.map(({ file }) => `
                     <a class="video-thumbnail elevation-1 interact" href="/watch/${encodeURIComponent(file)}">
-                      ${file.replace(/\.\w+$/, '').replace(/^\d\d /, '')}
+                      ${_.file(file)}
                     </a>
                   `))}
                   ${

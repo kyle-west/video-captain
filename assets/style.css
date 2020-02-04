@@ -170,6 +170,11 @@ details:not([open]) {
   font-size: small;
   display: block;
 }
+.video-thumbnail.caption::after {
+  content: var(--caption-text);
+  font-size: small;
+  display: block;
+}
 .video-thumbnail.current-video + .video-thumbnail {
   background: var(--bg-interactive-active-secondary);
 }

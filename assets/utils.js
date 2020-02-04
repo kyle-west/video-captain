@@ -12,6 +12,8 @@
     }
   }
   utils._.attrToProp = (x) => x.replace(/(\-\w)/g, m => m[1].toUpperCase())
+  utils._.file = (x) => x.replace(/\.\w+$/, '').replace(/^\d\d /, '')
+  utils._.folder = (x) => x.replace('/', '').replace(/\//g, ': ').replace(/^\d\d /, '')
   
   
   // Preferences

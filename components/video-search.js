@@ -29,17 +29,21 @@
 
     search() {
       const { collection, fuzzyInput } = this
-      const matches = []
+      const matches = {
+        rank1: [],
+        rank2: [], 
+      }
       const fuzzy = fuzzyInput.trim().toLowerCase();
       collection.forEach(item => {
         const { file, folder } = item
         const fileL = file.toLowerCase()
         const folderL = folder.toLowerCase()
         
-        if (fileL.includes(fuzzy)) matches.push({ rank: 1, item, matchType: 'file' })
-        // if (folderL.includes(fuzzy)) matches.push({ rank: 2, item, matchType: 'folder' })
+        if (fileL.includes(fuzzy)) matches.rank1.push(item)
+        if (folderL.includes(fuzzy)) matches.rank2.push(item)
       })
-      return matches.sort((a, b) => a.rank - b.rank)
+      matches.length = matches.rank1.length + matches.rank2.length
+      return matches
     }
     
     render () {
@@ -50,17 +54,23 @@
       this.innerHTML = `
         <pre class="results">${results.length} result${results.length === 1 ? '' : 's'} found for ${fuzzyInput}</pre>
         <div class="browser">
-          <section class="episodes">
-            ${_(results.map(({ item : {file} }) => `
-              <a class="video-thumbnail elevation-1 interact" href="/watch/${encodeURIComponent(file)}">
-                ${file.replace(/\.\w+$/, '').replace(/^\d\d /, '')}
+
+          ${_(results.rank1.length > 0 && `<section class="episodes">
+            ${_(results.rank1.map(({file, folder}) => `
+              <a class="video-thumbnail elevation-1 interact caption" style="--caption-text:'${_.folder(folder)}';background: var(--bg-interactive-active);" href="/watch/${encodeURIComponent(file)}">
+                ${_.file(file)}
               </a>
             `))}
-            ${
-              // HACK to get the last row to always justify nicely
-              `<span class="hack-episode-alignment"></span>`.repeat(8)
-            }
-          </section>
+            ${`<span class="hack-episode-alignment"></span>`.repeat(8)}
+          </section>`)}
+          ${_(results.rank2.length > 0 && `<section class="episodes">
+            ${_(results.rank2.map(({file, folder}) => `
+              <a class="video-thumbnail elevation-1 interact caption" style="--caption-text:'${_.folder(folder)}';" href="/watch/${encodeURIComponent(file)}">
+                ${_.file(file)}
+              </a>
+            `))}
+            ${`<span class="hack-episode-alignment"></span>`.repeat(8)}
+          </section>`)}
         </div>
       `
     }

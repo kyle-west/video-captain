@@ -51,7 +51,7 @@
           matches.rank3.push(item)
         }
       })
-      matches.length = matches.rank1.length + matches.rank2.length
+      matches.length = matches.rank1.length + matches.rank2.length + matches.rank3.length
       return matches
     }
     

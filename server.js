@@ -4,7 +4,8 @@
 const express = require('express')
 const fs = require('fs')
 const path = require('path')
-const ip = require("ip");
+const ip = require("ip")
+const ffmpeg = require('fluent-ffmpeg')
 
 
 // ----------------------------------------------------------------------------------------
@@ -12,6 +13,10 @@ const ip = require("ip");
 // ----------------------------------------------------------------------------------------
 const { port, mountPath, ready = null, log = null, settingsConfig = {} } = require('./config')
 const { videoFiles, organizedVideoFiles, sortedVideoFiles } = require('./mediaFiles')
+
+// set up thumbnail generation dir
+const thumbnailFolder = path.resolve('.', 'thumbnails')
+!fs.existsSync(thumbnailFolder) && fs.mkdirSync(thumbnailFolder)
 
 // Logging helper
 const LOG_ITEM = (...logData) => {
@@ -43,9 +48,9 @@ app.get('/data/videos/xml', (req, res) => {
   <VideoContent>
     ${videoFiles.map(vid => `
       <video
-        title="${vid.file.replace(/\W/g, ' ')}" 
+        title="${vid.file.replace(/\.\w+$/, '').replace(/\W/g, ' ')}" 
         description="${vid.folder.replace(/\W/g, ' ')}" 
-        hdposterurl="${hostPath}/assets/favicon.ico" 
+        hdposterurl="${hostPath}/thumbnail/${encodeURIComponent(vid.file)}" 
         streamformat="mp4" 
         url="${hostPath}/video/${encodeURIComponent(vid.file)}"/>
     `).join('')}
@@ -105,6 +110,30 @@ app.get('/video/:movieName', (req, res) => {
 
   fs.createReadStream(itemPath, streamConfig).pipe(res);
 });
+
+app.get('/thumbnail/:movieName', (req, res) => {
+  const { movieName } = req.params
+  const imageName = movieName.replace(/\.\w+$/, '.png')
+  const imagePath = path.resolve(thumbnailFolder, imageName)
+  if (!fs.existsSync(imagePath)) {
+    const { file, folder, NOT_FOUND } = videoFiles.find(x => x.file === movieName) || { NOT_FOUND: 404 }
+  
+    if (NOT_FOUND) {
+      return res.sendStatus(NOT_FOUND)
+    }
+    new ffmpeg(`${mountPath}${folder}/${file}`)
+      .on('end', function() {
+        res.sendFile(imagePath)
+      })
+      .screenshots({
+        timestamps: [ '10%' ],
+        folder: thumbnailFolder,
+        filename: imageName
+      });
+  } else {
+    res.sendFile(imagePath)
+  }
+})
 
 
 // ----------------------------------------------------------------------------------------

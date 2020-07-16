@@ -36,6 +36,21 @@ const app = express()
 // ----------------------------------------------------------------------------------------
 app.get('/data/videos', (req, res) => res.json(sortedVideoFiles));
 app.get('/data/videos/flat', (req, res) => res.json(videoFiles));
+app.get('/data/videos/xml', (req, res) => {
+  const hostPath = `http://${ip.address()}:${port}`
+  res.set('Content-Type', 'text/xml')
+  res.send(`<?xml version = "1.0" encoding = "utf-8" standalone = "yes" ?>
+  <VideoContent>
+    ${videoFiles.map(vid => `
+      <video
+        title="${vid.file.replace(/\W/g, ' ')}" 
+        description="${vid.folder.replace(/\W/g, ' ')}" 
+        hdposterurl="${hostPath}/assets/favicon.ico" 
+        streamformat="mp4" 
+        url="${hostPath}/video/${encodeURIComponent(vid.file)}"/>
+    `).join('')}
+  </VideoContent>`)
+});
 app.get('/data/videos/related/:movieName', (req, res) => {
   const { movieName } = req.params
   const alikeVideos = videoFiles.find(x => x.file === movieName).folder

@@ -108,3 +108,5 @@ dist
 
 # Security reasons
 config.js
+
+thumbnails/

@@ -55,7 +55,7 @@
                 </summary>
                 <section class="episodes">
                   ${_(episodes.map(({ file }) => `
-                    <a class="video-thumbnail elevation-1 interact" href="/watch/${encodeURIComponent(file)}">
+                    <a class="video-thumbnail elevation-1 interact" href="/watch/${encodeURIComponent(file)}" style=background-image:url("/thumbnail/${encodeURIComponent(file)}");>
                       ${_.file(file)}
                     </a>
                   `))}

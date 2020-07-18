@@ -46,13 +46,16 @@ app.get('/data/videos/xml', (req, res) => {
   res.set('Content-Type', 'text/xml')
   res.send(`<?xml version = "1.0" encoding = "utf-8" standalone = "yes" ?>
   <VideoContent>
-    ${videoFiles.map(vid => `
-      <video
-        title="${vid.file.replace(/\.\w+$/, '').replace(/\W/g, ' ')}" 
-        description="${vid.folder.replace(/\W/g, ' ')}" 
-        hdposterurl="${hostPath}/thumbnail/${encodeURIComponent(vid.file)}" 
-        streamformat="mp4" 
-        url="${hostPath}/video/${encodeURIComponent(vid.file)}"/>
+    ${sortedVideoFiles.map(([ folderName, items ]) => `
+      <VideoGroup title="${folderName.replace(/\W/g, ' ').trim()}">
+        ${items.map(({ file }) => `
+          <video
+            title="${file.replace(/\.\w+$/, '').replace(/\W/g, ' ').trim()}" 
+            hdposterurl="${hostPath}/thumbnail/${encodeURIComponent(file)}" 
+            streamformat="mp4" 
+            url="${hostPath}/video/${encodeURIComponent(file)}"/>
+        `).join('')}
+      </VideoGroup>
     `).join('')}
   </VideoContent>`)
 });
@@ -116,20 +119,20 @@ app.get('/thumbnail/:movieName', (req, res) => {
   const imageName = movieName.replace(/\.\w+$/, '.png')
   const imagePath = path.resolve(thumbnailFolder, imageName)
   if (!fs.existsSync(imagePath)) {
-    const { file, folder, NOT_FOUND } = videoFiles.find(x => x.file === movieName) || { NOT_FOUND: 404 }
-  
+    const { file, folder, NOT_FOUND } = (videoFiles.find(x => x.file === movieName)) || { NOT_FOUND: 404 }
+    LOG_ITEM(`[IMAGE]: ${imagePath}`)
     if (NOT_FOUND) {
       return res.sendStatus(NOT_FOUND)
     }
     new ffmpeg(`${mountPath}${folder}/${file}`)
-      .on('end', function() {
-        res.sendFile(imagePath)
-      })
-      .screenshots({
-        timestamps: [ '10%' ],
-        folder: thumbnailFolder,
-        filename: imageName
-      });
+    .on('end', function() {
+      res.sendFile(imagePath)
+    })
+    .screenshots({
+      timestamps: [ '10%' ],
+      folder: thumbnailFolder,
+      filename: imageName
+    });
   } else {
     res.sendFile(imagePath)
   }

@@ -11,7 +11,24 @@ const ffmpeg = require('fluent-ffmpeg')
 // ----------------------------------------------------------------------------------------
 // App Specific Configs and Utils
 // ----------------------------------------------------------------------------------------
-const { port, mountPath, ready = null, log = null, settingsConfig = {} } = require('./config')
+
+const configPath = process.env.VC_CONFIG || path.resolve(__dirname, './config.js')
+console.log(configPath)
+
+if (!fs.existsSync(configPath)) {
+  console.error(new Error(`No config file found. Expected to find a config file at "${configPath}", but no such file exists. See https://github.com/kyle-west/video-captain#create-a-configjs-file for details on how to set one up.`))
+  process.exit(20)
+}
+
+const { port, mountPath, mediaRoot, ready = null, log = null, settingsConfig = {} } = require(configPath)
+
+const mediaRootPath = mediaRoot || mountPath // mountPath is deprecated, but we keep it for backwards compatibility
+
+if (!fs.existsSync(mediaRootPath)) {
+  console.error(new Error(`Expected to find a media root at "${mediaRootPath}", but no such folder exists. See https://github.com/kyle-west/video-captain#create-a-configjs-file for details.`))
+  process.exit(30)
+}
+
 const { videoFiles, organizedVideoFiles, sortedVideoFiles } = require('./mediaFiles')
 
 // set up thumbnail generation dir
@@ -81,7 +98,7 @@ app.get('/video/:movieName', (req, res) => {
     return res.sendStatus(NOT_FOUND)
   }
 
-  const itemPath = `${mountPath}${folder}/${file}`
+  const itemPath = `${mediaRootPath}${folder}/${file}`
 
   const { range } = req.headers
   const { size } = fs.statSync(itemPath)
@@ -124,7 +141,7 @@ app.get('/thumbnail/:movieName', (req, res) => {
     if (NOT_FOUND) {
       return res.sendStatus(NOT_FOUND)
     }
-    new ffmpeg(`${mountPath}${folder}/${file}`)
+    new ffmpeg(`${mediaRootPath}${folder}/${file}`)
     .on('end', function() {
       res.sendFile(imagePath)
     })
@@ -173,6 +190,6 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   let localhostURL = port === 80 ? 'http://localhost/' : `http://localhost:${port}/`
   let ipURL = port === 80 ? `http://${ip.address()}/` : `http://${ip.address()}:${port}/`
-  LOG_ITEM(`${mountPath} media hosted at\n  ${localhostURL}\n  ${ipURL}`)
+  LOG_ITEM(`${mediaRootPath} media hosted at\n  ${localhostURL}\n  ${ipURL}`)
   ready && ready(ipURL)
 })

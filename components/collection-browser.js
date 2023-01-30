@@ -22,9 +22,15 @@
       this.collection = await fetch(this.boundEndpoint)
       return this.collection
     }
-    
+
     renderLoadingState () {
-      this.innerHTML = `<br/><br/><br/><br/><br/>Loading...<span class="hack-episode-alignment"></span>`
+      this.innerHTML = `<br/><br/><br/><br/><br/><div class="browser">Loading...<span class="hack-episode-alignment"></span></div>`
+    }
+
+    renderMediaMissingState () {
+      this.innerHTML = `<br/><br/><br/><br/><br/><div class="browser">
+        No playable media found. Add some videos to your <code>mediaRoot</code> directory and restart VideoCaptain to see them here.
+      </div>`
     }
     
     render () {
@@ -44,6 +50,7 @@
           }
         `;
       } else {
+        if (!collection.length) return this.renderMediaMissingState()
         this.innerHTML = `
           <div class="browser">
             ${_(collection.map(([ show, episodes ]) => `

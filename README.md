@@ -15,14 +15,16 @@ npm install
 
 ### Create a `config.js` file
 
-Next, you will need to set up your `config.js` in the root of video captain. It should be of the form:
+Next, you will need to set up your `config.js` in the root of video captain. For flexibility, you may adjust the location of the config file by setting the `VC_CONFIG` envar to the location of your file.
+
+The file should be of the form:
 
 ```js
 module.exports = {
-  mountPath: '/media/videos/',      // [REQUIRED] path to the folder you want to serve videos from
-  port: process.env.PORT || 8080,   // [OPTIONAL] the port you want the server to host at (default 5555)
-  settingsConfig: {                 // [OPTIONAL] make some custom preferences for how the system runs
-    clientCanShutdownServer: true,  // allow setting on client side to shutdown server exits with (200) status
+  mediaRoot: '/path/to/media/videos/',  // [REQUIRED] path to the root media folder you want to serve videos from
+  port: process.env.PORT || 8080,       // [OPTIONAL] the port you want the server to host at (default 5555)
+  settingsConfig: {                     // [OPTIONAL] make some custom preferences for how the system runs
+    clientCanShutdownServer: true,      // allow setting on client side to shutdown server exits with (200) status
   }
 }
 ```

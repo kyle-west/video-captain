@@ -1,5 +1,5 @@
 const { resolve } = require('path')
-const { existsSync } = require('fs')
+const { existsSync, readFileSync } = require('fs')
 
 let configPath = process.env.VC_CONFIG || resolve(__dirname, './config.js')
 
@@ -8,7 +8,7 @@ if (!existsSync(configPath)) {
   configPath = resolve(__dirname, '.defaults/default.config.js')
 }
 
-const { port, mountPath, mediaRoot, ready = null, log = null, settingsConfig = {} } = require(configPath)
+const { port, mountPath, mediaRoot, ready = null, log = null, settingsConfig = {}, https } = require(configPath)
 
 const mediaRootPath = mediaRoot || mountPath // mountPath is deprecated, but we keep it for backwards compatibility until V2
 
@@ -17,10 +17,25 @@ if (!existsSync(mediaRootPath)) {
   process.exit(30)
 }
 
+const protocol = https ? 'https' : 'http'
+let credentials = null
+if (https) {
+  if (typeof https === 'object') {
+    if (https.key && https.cert) {
+      credentials = {
+        key: readFileSync(https.key),
+        cert: readFileSync(https.cert)
+      }
+    }
+  }
+}
+
 module.exports = {
   port,
   mediaRoot: mediaRootPath,
   ready,
   log,
-  settingsConfig
+  settingsConfig,
+  protocol,
+  credentials,
 }

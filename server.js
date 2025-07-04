@@ -13,6 +13,8 @@ const ffmpeg = require('fluent-ffmpeg')
 // ----------------------------------------------------------------------------------------
 
 const {
+  protocol,
+  credentials,
   port = 5555,
   mediaRoot: mediaRootPath,
   ready,
@@ -174,9 +176,29 @@ app.get('*', (req, res) => {
 // ----------------------------------------------------------------------------------------
 // Boot Up the Server
 // ----------------------------------------------------------------------------------------
-app.listen(port, () => {
-  let localhostURL = port === 80 ? 'http://localhost/' : `http://localhost:${port}/`
-  let ipURL = port === 80 ? `http://${ip.address()}/` : `http://${ip.address()}:${port}/`
+const startup = () => {
+  let localhostURL = port === 80 ? `${protocol}://localhost/` : `${protocol}://localhost:${port}/`
+  let ipURL = port === 80 ? `${protocol}://${ip.address()}/` : `${protocol}://${ip.address()}:${port}/`
   LOG_ITEM(`${mediaRootPath} media hosted at\n  ${localhostURL}\n  ${ipURL}`)
   ready && ready(ipURL)
-})
+}
+
+if (protocol === 'https') {
+  const https = require('https')
+  const fs = require('fs')
+  const createCert = require('create-cert');
+  
+  if (!credentials) {
+    createCert({ days: 365, commonName: 'localhost' })
+      .then(cert => {
+        https.createServer(cert, app).listen(port, startup)
+      })
+      .catch(err => {
+        console.error('Error creating certificates:', err)
+      })
+  } else {
+    https.createServer(credentials, app).listen(port, startup)
+  }
+} else {
+  app.listen(port, startup)
+}

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/kyle-west/video-captain#readme",
   "dependencies": {
+    "create-cert": "^1.0.6",
     "dragon-router": "^1.1.2",
     "express": "^4.21.2",
     "fluent-ffmpeg": "^2.1.2",

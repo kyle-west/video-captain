@@ -23,6 +23,7 @@ The file should be of the form:
 module.exports = {
   mediaRoot: '/path/to/media/videos/',  // [REQUIRED] path to the root media folder you want to serve videos from
   port: process.env.PORT || 8080,       // [OPTIONAL] the port you want the server to host at (default 5555)
+  https: true,                          // [OPTIONAL] use HTTPS instead of HTTP (default false)
   settingsConfig: {                     // [OPTIONAL] make some custom preferences for how the system runs
     clientCanShutdownServer: true,      // allow setting on client side to shutdown server exits with (200) status
   }

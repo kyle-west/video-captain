@@ -12,22 +12,13 @@ const ffmpeg = require('fluent-ffmpeg')
 // App Specific Configs and Utils
 // ----------------------------------------------------------------------------------------
 
-const configPath = process.env.VC_CONFIG || path.resolve(__dirname, './config.js')
-console.log(configPath)
-
-if (!fs.existsSync(configPath)) {
-  console.error(new Error(`No config file found. Expected to find a config file at "${configPath}", but no such file exists. See https://github.com/kyle-west/video-captain#create-a-configjs-file for details on how to set one up.`))
-  process.exit(20)
-}
-
-const { port, mountPath, mediaRoot, ready = null, log = null, settingsConfig = {} } = require(configPath)
-
-const mediaRootPath = mediaRoot || mountPath // mountPath is deprecated, but we keep it for backwards compatibility
-
-if (!fs.existsSync(mediaRootPath)) {
-  console.error(new Error(`Expected to find a media root at "${mediaRootPath}", but no such folder exists. See https://github.com/kyle-west/video-captain#create-a-configjs-file for details.`))
-  process.exit(30)
-}
+const {
+  port = 5555,
+  mediaRoot: mediaRootPath,
+  ready,
+  log,
+  settingsConfig
+} = require('./getConfig')
 
 const { videoFiles, organizedVideoFiles, sortedVideoFiles } = require('./mediaFiles')
 
@@ -39,11 +30,7 @@ const thumbnailFolder = path.resolve('.', 'thumbnails')
 const LOG_ITEM = (...logData) => {
   logData = logData.join(' ')
   let time = new Date()
-  if (log) {
-    log(logData, time.toISOString())
-  } else {
-    console.log(logData, time.toISOString())
-  }
+  ;(log || console.log)(`[${time.toISOString()}]`, logData)
 }
 
 

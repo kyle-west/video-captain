@@ -30,6 +30,7 @@
     renderMediaMissingState () {
       this.innerHTML = `<br/><br/><br/><br/><br/><div class="browser">
         No playable media found. Add some videos to your <code>mediaRoot</code> directory and restart VideoCaptain to see them here.
+        See the docs for more details: <a href="https://github.com/kyle-west/video-captain" target="_blank">VideoCaptain Docs</a>.
       </div>`
     }
     
